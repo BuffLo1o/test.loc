@@ -2,58 +2,49 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Contracts\PostServiceInterface;
 use Illuminate\Http\Request;
-use DB;
 use App\models\Post;
 
 class PostController extends Controller
 {
+    /** @var PostServiceInterface  */
+    public $postService;
+
+    /**
+     * PostController constructor.
+     * @param PostServiceInterface $postService
+     */
+    public function __construct(PostServiceInterface $postService)
+    {
+        $this->postService = $postService;
+    }
+
     public function index()
     {
-        //TODO в переменные нужно класть значения вот так $variable = $data
-        //TODO Post::query()->get() рабочий вариант, но проще использовать Post::all()
-        $posts=Post::query()->get();          //Принимаю данные с таблицы 
-        //TODO при вызове функции, не надо делать отступ от агрументов function($argument)
-        return view ('posts')->with(['posts'=> $posts]); //Передаю на шаблон
+        $posts = Post::all();
+
+        return view('post.index')
+            ->with(['posts'=> $posts]);
     }
 
-    //TODO Посмотри в интернете на routeModelBinding там показывается как сразу получать модель в контроллере
-    public function like($id)
+    public function get(Post $post)
     {
-        //TODO where('id', '=', $id) как-то не удобно, да? Есть Post::find($id)
-        $posts=Post::where('id','=',$id)->get();         //Выбираю нужный пост
-        return view ('like')->with(['posts'=> $posts]);             //Передаю на шаблон
+        return view('post.get')
+            ->with(['post'=> $post]);
     }
 
-    public function popular()
+    public function popular(?$limit)
     {
-        //TODO тут твоя функция слишком узко специализированная, а если ты захочешь все посты, у которых лайков больше 1000? Добавь не обязательный аргумент кол-во лайков с дефолтным значением 100
-        $posts=Post::query()->orderBy('like', 'desc')->where('like', '>', 100)->get();          //Принимаю данные с таблицы, задаю параметры интересного поста и сортирую like по убыванию
-        return view ('popular')->with(['posts'=> $posts]);          //Передаю на шаблон
-        
+        $posts = $this->postService->getPopular($limit);
+
+        return view ('post.popular')->with(['posts'=> $posts]);
     }
 
-    //TODO Плохой нейминг
-    public function popular5()
-    {
-        //TODO аналогично прошлому комментарию, только два аргукмента, кол-во лайков и кол-во постов, которые хочешь получить
-        $posts=Post::query()->orderBy('like', 'desc')->where('like', '>', 100)->limit(5)->get();          //Принимаю данные с таблицы, задаю параметры интересного поста и сортирую like по убыванию и ограничиваю их до 5
-        return view ('popular5')->with(['posts'=> $posts]); //Передаю на шаблон
-    }
-    //TODO вообще считаю что функции popular и popular5 нужно объединить, а еще лучше объединить, а логику фильтрации вынести в сервис
-
-    //TODO Тоже проблемы с неймингом, update подразумевает изменение значения на любое, а ты всегда увеличиваешь на 1, мб назвать setLike?
-    public function likeupdate($id)
+    public function like(Post $post)
     {   
-        $i=Post::where('id','=',$id)->pluck('like')->first();
-        $i++;
-        //TODO тут вообще какая-то дичь...
-        $post=Post::where('id','=',$id)->get();
-        $post=Post::where('id','=',$id)->update(['like' => $i]);
-        
-        $posts=Post::where('id','=',$id)->get();
-        return view ('like')->with(['posts'=> $posts]);
-    }
+        $post = $this->postService->like($post);
 
-    //TODO Все твои комментарии бесполезные, ты просто переводишь то что ты написал на русский язык, в этом нет необходимости, лучше посмотри что такое PHP-DOC
+        return view ('post.get')->with(['post'=> $post]);
+    }
 }

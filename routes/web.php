@@ -15,12 +15,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/','App\Http\Controllers\PostController@index')->name('post');
 
-Route::get('/like/{id}','App\Http\Controllers\PostController@like');
+Route::get('/like/{post}','App\Http\Controllers\PostController@like');
 
-Route::get('/popular', 'App\Http\Controllers\PostController@popular')->name('popular');
+Route::get('/popular/{?limit}', 'App\Http\Controllers\PostController@popular')->name('popular');
 
-Route::get('/popular/5', 'App\Http\Controllers\PostController@popular5')->name('popular5');
-
-Route::post('like/{id}','App\Http\Controllers\PostController@like')->name('like');
-
-Route::get('likeupdate/{id}','App\Http\Controllers\PostController@likeupdate')->name('likeupdate');
+Route::post('/like/{post}','App\Http\Controllers\PostController@like')->name('like');

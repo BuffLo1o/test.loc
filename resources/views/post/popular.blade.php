@@ -6,7 +6,7 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header"><a href="{{Route('post')}}">Главная</a>
-                                        <a href="{{Route('popular5')}}">5 Популярных постов</div>
+                                        <a href="{{Route('popular5')}}">Популярные посты</div>
                                         @foreach ($posts as $post)
         
         
