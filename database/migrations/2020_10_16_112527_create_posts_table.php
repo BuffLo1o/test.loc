@@ -25,7 +25,6 @@ class CreatePostsTable extends Migration
             $table->integer('like');
             //TODO string вместит в себе максимум 255 символов, этого точно хватит?
             $table->string('content');
-
         });
     }
 
