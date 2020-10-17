@@ -16,10 +16,14 @@ class CreatePostsTable extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            //TODO если есть автор, то где его таблица?
             $table->integer('author_id');
             $table->string('subject');
+            //TODO дата чего?
             $table->DateTime('date');
+            //TODO тебе точно нужна возможность чтоб like был отрицательным числом? есть специальный тип unsigned integer
             $table->integer('like');
+            //TODO string вместит в себе максимум 255 символов, этого точно хватит?
             $table->string('content');
 
         });
